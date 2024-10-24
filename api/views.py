@@ -45,6 +45,15 @@ def accident_list(request):
     alcohol_involved = request.GET.get('alcohol_involved')
     day_of_week = request.GET.get('day_of_week')
 
+    # Filters for Environmental Model
+    weather_1 = request.GET.get('weather_1')
+    weather_2 = request.GET.get('weather_2')
+    road_surface = request.GET.get('road_surface')
+    road_cond_1 = request.GET.get('road_cond_1')
+    road_cond_2 = request.GET.get('road_cond_2')
+    lighting = request.GET.get('lighting')
+    state_hwy_ind = request.GET.get('state_hwy_ind')
+
     # Filters for Party Model
     party_type = request.GET.get('party_type')
     at_fault = request.GET.get('at_fault')
@@ -138,6 +147,22 @@ def accident_list(request):
         queryset = queryset.filter(alcohol_involved__iexact=alcohol_involved)
     if day_of_week:
         queryset = queryset.filter(day_of_week__iexact=day_of_week)
+
+    # Apply filters for Environment Model fields
+    if weather_1:
+        queryset = queryset.filter(environment__weather_1=weather_1)
+    if weather_2:
+        queryset = queryset.filter(environment__weather_2=weather_2)
+    if road_surface:
+        queryset = queryset.filter(environment__road_surface=road_surface)
+    if road_cond_1:
+        queryset = queryset.filter(environment__road_cond_1=road_cond_1)
+    if road_cond_2:
+        queryset = queryset.filter(environment__road_cond_2=road_cond_2)
+    if lighting:
+        queryset = queryset.filter(environment__lighting=lighting)
+    if state_hwy_ind:
+        queryset = queryset.filter(environment__state_hwy_ind=state_hwy_ind)
 
     # Apply filters for Party Model fields
     if party_type:
