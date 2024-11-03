@@ -70,7 +70,7 @@ class PartySerializer(serializers.ModelSerializer):
         model = Party
         fields = [
             'party_id',
-            'case',
+            'case_id',
             'party_number',
             'party_type',
             'at_fault',
@@ -96,7 +96,7 @@ class VictimSerializer(serializers.ModelSerializer):
         model = Victim
         fields = [
             'victim_id',
-            'case',
+            'case_id',
             'party',
             'victim_role',
             'victim_sex',
