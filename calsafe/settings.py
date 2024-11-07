@@ -15,8 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal309.dll'
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -27,7 +25,6 @@ SECRET_KEY = 'django-insecure-x3hzre+m7k@%+v(fuzpx#_wt0zwd%x$_(hwv9#vse$r31uua4k
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -60,7 +57,8 @@ MIDDLEWARE = [
 
 #CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',  #front-end URL
+    'http://localhost:3000',
+    'https://calsafe.vercel.app', 
 ]
 
 ROOT_URLCONF = 'calsafe.urls'
