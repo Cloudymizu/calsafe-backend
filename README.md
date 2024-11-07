@@ -1,5 +1,8 @@
 # How to Setup Development Server for CalSafe:
 
+## Attention
+Currently, the main branch is supposed to be deployed onto Heroku. However, the localdev branch is currently the only one working on development on your computer. The main branch is still in the process of currently being deployed.
+
 ## You will need to Install:
   - PostgreSQL with GIS tools
   - Python
