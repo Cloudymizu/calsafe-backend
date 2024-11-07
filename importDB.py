@@ -198,11 +198,12 @@ for county in counties:
                 RETURNING PARTY_ID
             """
 
-            sql_formatted = cursor.mogrify(query, arguments)
+            #sql_formatted = cursor.mogrify(query, arguments)
             #print(f"SQL Query: \n{sql_formatted}")
 
             # Execute the SQL query
-            cursor.execute(sql_formatted)
+            #cursor.execute(sql_formatted)
+            cursor.execute(query, arguments)
             party_id = cursor.fetchone()[0]
         
         except Exception as e:
