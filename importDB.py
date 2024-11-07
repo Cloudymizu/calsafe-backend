@@ -77,8 +77,6 @@ for county in counties:
                 safe_int(row['DISTANCE'], 'DISTANCE'),
                 safe_str(row['DIRECTION'])[:1],
                 safe_str(row['INTERSECTION'])[:1],
-                row['LATITUDE'],
-                row['LONGITUDE'],
                 row['CITY'],
                 row['COUNTY'],
                 row['POINT_X'],
