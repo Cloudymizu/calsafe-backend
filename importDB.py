@@ -53,9 +53,9 @@ for county in counties:
     victims_file = os.path.join(base_dir, county, "Victims.csv")
 
     # Load the CSV files into DataFrames
-    parties_df = pd.read_csv(parties_file)
-    crashes_df = pd.read_csv(crashes_file)
-    victims_df = pd.read_csv(victims_file)
+    parties_df = pd.read_csv(parties_file, encoding='utf-8')
+    crashes_df = pd.read_csv(crashes_file, encoding='utf-8')
+    victims_df = pd.read_csv(victims_file, encoding='utf-8')
 
     # Process Crashes data
     for index, row in crashes_df.iterrows():
