@@ -63,7 +63,8 @@ MIDDLEWARE = [
 #CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
-    'https://calsafe.vercel.app', 
+    'https://calsafe.vercel.app',
+    'https://calsafe-19a215b7c9d4.herokuapp.com', 
 ]
 
 ROOT_URLCONF = 'calsafe.urls'
