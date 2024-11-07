@@ -2,7 +2,7 @@
 
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import LocationViewSet, SeverityViewSet, EnvironmentViewSet, AccidentViewSet, PartyViewSet, VictimViewSet, accident_list, crash_statistics
+from .views import LocationViewSet, SeverityViewSet, EnvironmentViewSet, AccidentViewSet, PartyViewSet, VictimViewSet, accident_list
 
 router = DefaultRouter()
 router.register(r'locations', LocationViewSet)
@@ -15,5 +15,4 @@ router.register(r'victims', VictimViewSet)
 urlpatterns = [
     path('accidents/', accident_list, name='accident-list'),
     path('', include(router.urls)),
-    path('statistics/', crash_statistics, name='crash-statistics'),
 ]

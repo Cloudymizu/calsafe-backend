@@ -4,7 +4,7 @@ from rest_framework import viewsets
 from .models import Location, Severity, Environment, Accident, Party, Victim
 from .serializers import (LocationSerializer, SeveritySerializer, EnvironmentSerializer, 
                           AccidentSerializer, PartySerializer, VictimSerializer)
-from django.db.models import Q, Sum, Count
+from django.db.models import Q
 
 @api_view(['GET'])
 def accident_list(request):
@@ -213,45 +213,6 @@ def accident_list(request):
     # Serialize the data
     serializer = AccidentSerializer(queryset, many=True)
     return Response(serializer.data)
-
-@api_view(['GET'])
-def crash_statistics(request):
-    # Get query parameters from the request
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
-    county = request.GET.get('county')
-    city = request.GET.get('city')
-
-    # Filter accidents based on the provided parameters
-    queryset = Accident.objects.all()
-
-    if start_date and end_date:
-        queryset = queryset.filter(collision_date__range=[start_date, end_date])
-    elif start_date:
-        queryset = queryset.filter(collision_date__gte=start_date)
-    elif end_date:
-        queryset = queryset.filter(collision_date__lte=end_date)
-
-    if county:
-        queryset = queryset.filter(location__county__icontains=county)
-    if city:
-        queryset = queryset.filter(location__city__icontains=city)
-
-    # Aggregate statistics
-    statistics = queryset.aggregate(
-        total_crashes=Count('case_id'),
-        total_injuries=Sum('severity__number_injured'),
-        total_fatalities=Sum('severity__number_killed'),
-        pedestrian_accidents=Count('case_id', filter=Q(pedestrian_accident="Y")),
-        bicycle_accidents=Count('case_id', filter=Q(bicycle_accident="Y")),
-        motorcycle_accidents=Count('case_id', filter=Q(motorcycle_accident="Y")),
-        truck_accidents=Count('case_id', filter=Q(truck_accident="Y")),
-        alcohol_related=Count('case_id', filter=Q(alcohol_involved="Y")),
-    )
-
-    # Return the statistics as a response
-    return Response(statistics)
-
 
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
