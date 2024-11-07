@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import psycopg2
+import urllib.parse as urlparse
 
 # Function to convert integer time to HH:MM:SS format
 def convert_to_time_str(time_int):
@@ -28,11 +29,15 @@ counties = ["Imperial", "Kern", "Los Angeles", "Orange", "Riverside", "San Berna
             "San Luis Obispo", "Santa Barbara", "Ventura"]
 
 # Database connection
+DATABASE_URL = os.getenv("DATABASE_URL")
+url = urlparse.urlparse(DATABASE_URL)
+
 conn = psycopg2.connect(
-    dbname="calsafe",
-    user="postgres",
-    password="Fullerton",
-    host="localhost"
+    dbname=url.path[1:],
+    user=url.username,
+    password=url.password,
+    host=url.hostname,
+    port=url.port
 )
 cursor = conn.cursor()
 
