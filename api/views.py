@@ -252,6 +252,27 @@ def crash_statistics(request):
     # Return the statistics as a response
     return Response(statistics)
 
+@api_view(['GET'])
+def summary(request):
+    # Aggregate data for each year from 2018 to 2023
+    summary = []
+    for year in range(2018, 2024):
+        data = Accident.objects.filter(accident_year=year).aggregate(
+            total_crashes=Count('case_id'),
+            total_injuries=Sum('severity__number_injured'),
+            total_fatalities=Sum('severity__number_killed'),
+            pedestrian_accidents=Count('case_id', filter=Q(pedestrian_accident="Y")),
+            bicycle_accidents=Count('case_id', filter=Q(bicycle_accident="Y")),
+            motorcycle_accidents=Count('case_id', filter=Q(motorcycle_accident="Y")),
+            truck_accidents=Count('case_id', filter=Q(truck_accident="Y")),
+            alcohol_related=Count('case_id', filter=Q(alcohol_involved="Y")),
+        )
+        summary.append({
+            'year': year,
+            'data': data,
+        })
+
+    return Response(summary)
 
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
