@@ -274,6 +274,32 @@ def summary(request):
 
     return Response(summary)
 
+@api_view(['GET'])
+def county_summary(request):
+    county_summary = []
+    county = request.GET.get('county')
+    queryset = Accident.objects.all()
+    queryset = queryset.filter(location__county__icontains=county)
+    for year in range(2018, 2024):
+        data = queryset.filter(accident_year=year).aggregate(
+            total_crashes=Count('case_id'),
+            total_injuries=Sum('severity__number_injured'),
+            total_fatalities=Sum('severity__number_killed'),
+            pedestrian_accidents=Count('case_id', filter=Q(pedestrian_accident="Y")),
+            bicycle_accidents=Count('case_id', filter=Q(bicycle_accident="Y")),
+            motorcycle_accidents=Count('case_id', filter=Q(motorcycle_accident="Y")),
+            truck_accidents=Count('case_id', filter=Q(truck_accident="Y")),
+            alcohol_related=Count('case_id', filter=Q(alcohol_involved="Y")),
+        )
+        county_summary.append({
+            'year': year,
+            'data': data,
+        })
+
+
+    # Return the statistics as a response
+    return Response(county_summary)
+
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
