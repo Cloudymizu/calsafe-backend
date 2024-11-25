@@ -113,6 +113,8 @@ class AccidentSerializer(serializers.ModelSerializer):
     location = LocationSerializer()
     severity = SeveritySerializer()
     environment = EnvironmentSerializer()
+    parties = PartySerializer(many=True, read_only=True)
+    victims = VictimSerializer(many=True, read_only=True) 
 
     class Meta:
         model = Accident
@@ -134,5 +136,7 @@ class AccidentSerializer(serializers.ModelSerializer):
             'mviw',
             'alcohol_involved',
             'day_of_week',
+            'parties',
+            'victims', 
         ]
 

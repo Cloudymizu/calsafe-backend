@@ -33,11 +33,10 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 url = urlparse.urlparse(DATABASE_URL)
 
 conn = psycopg2.connect(
-    dbname=url.path[1:],
-    user=url.username,
-    password=url.password,
-    host=url.hostname,
-    port=url.port
+    dbname="calsafe",
+    user="postgres",
+    password="Fullerton",
+    host="localhost",
 )
 cursor = conn.cursor()
 
@@ -67,8 +66,8 @@ for county in counties:
         # Insert data into Location table
         cursor.execute(
             """
-            INSERT INTO Location (PRIMARY_RD, SECONDARY_RD, DISTANCE, DIRECTION, INTERSECTION, LATITUDE, LONGITUDE, CITY, COUNTY, POINT_X, POINT_Y)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO Location (PRIMARY_RD, SECONDARY_RD, DISTANCE, DIRECTION, INTERSECTION, CITY, COUNTY, POINT_X, POINT_Y)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING LOCATION_ID
             """,
             (
@@ -132,13 +131,13 @@ for county in counties:
         # Insert data into Accidents table
         cursor.execute(
             """
-            INSERT INTO Accidents (ACCIDENT_YEAR, COLLISION_DATE, COLLISION_TIME, LOCATION_ID, SEVERITY_ID, ENVIRONMENT_ID, PARTY_COUNT, 
+            INSERT INTO Accidents (CASE_ID, ACCIDENT_YEAR, COLLISION_DATE, COLLISION_TIME, LOCATION_ID, SEVERITY_ID, ENVIRONMENT_ID, PARTY_COUNT, 
                                    HIT_AND_RUN, TYPE_OF_COLLISION, PEDESTRIAN_ACCIDENT, BICYCLE_ACCIDENT, MOTORCYCLE_ACCIDENT, TRUCK_ACCIDENT, 
                                    MVIW, ALCOHOL_INVOLVED, PCF_VIOL_CATEGORY, DAY_OF_WEEK)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            RETURNING CASE_ID
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """,
             (
+                safe_int(row['CASE_ID'], 'CASE_ID'), 
                 safe_int(row['ACCIDENT_YEAR'], 'ACCIDENT_YEAR'),
                 row['COLLISION_DATE'], 
                 collision_time_str, 
@@ -158,14 +157,13 @@ for county in counties:
                 safe_str(row['DAY_OF_WEEK'])[:1]
             )
         )
-        case_id = cursor.fetchone()[0]
 
     # Process Parties data
     for index, row in parties_df.iterrows():
         # Prepare the arguments
         try:   
             arguments = (
-                case_id, 
+                safe_int(row['CASE_ID'], 'CASE_ID'), 
                 safe_int(row['PARTY_NUMBER'], 'PARTY_NUMBER'),
                 safe_str(row['PARTY_TYPE'])[:1], 
                 safe_str(row['AT_FAULT'])[:1], 
@@ -222,8 +220,8 @@ for county in counties:
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """,
             (
-                case_id,
-                party_id, 
+                safe_int(row['CASE_ID'], 'CASE_ID'), 
+                party_id,  
                 safe_str(row['VICTIM_ROLE']), 
                 safe_str(row['VICTIM_SEX']), 
                 safe_int(row['VICTIM_AGE'], 'VICTIM_AGE'),
