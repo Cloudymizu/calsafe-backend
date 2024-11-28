@@ -247,7 +247,70 @@ def crash_statistics(request):
         motorcycle_accidents=Count('case_id', filter=Q(motorcycle_accident="Y")),
         truck_accidents=Count('case_id', filter=Q(truck_accident="Y")),
         alcohol_related=Count('case_id', filter=Q(alcohol_involved="Y")),
+        hit_and_run=Count('case_id', filter=Q(hit_and_run="M") | Q(hit_and_run="F")),
+        broadside=Count('case_id', filter=Q(type_of_collision="D")),
+        head_on=Count('case_id', filter=Q(type_of_collision="A")),
+        sideswipe=Count('case_id', filter=Q(type_of_collision="B")),
+        rear_end=Count('case_id', filter=Q(type_of_collision="C")),
+        hit_object=Count('case_id', filter=Q(type_of_collision="E")),
+        roll_over=Count('case_id', filter=Q(type_of_collision="F")),
+
     )
+
+    # Find the city with the most accidents
+    most_accidents_city = (
+        queryset.values('location__city')
+        .annotate(accident_count=Count('case_id'))
+        .order_by('-accident_count')
+        .first()
+    )
+
+    # Find the most common primary road
+    most_common_primary_road = (
+        queryset
+        .values('location__primary_rd')
+        .annotate(count=Count('case_id'))
+        .order_by('-count')
+        .first()
+    )
+
+    # Find the most common primary-secondary road pairs
+    most_common_road_pair = (
+        queryset
+        .values('location__primary_rd', 'location__secondary_rd')
+        .annotate(count=Count('case_id'))
+        .order_by('-count')
+        .first()
+    )
+
+    # Find the most common day of the week
+    most_common_day = (
+        queryset
+        .values('day_of_week')
+        .annotate(count=Count('case_id'))
+        .order_by('-count')
+        .first()
+    )
+
+    statistics.update({
+        'most_common_primary_road': {
+            'primary_rd': most_common_primary_road['location__primary_rd'],
+            'count': most_common_primary_road['count'],
+        } if most_common_primary_road else None,
+        'most_common_road_pair': {
+            'primary_rd': most_common_road_pair['location__primary_rd'],
+            'secondary_rd': most_common_road_pair['location__secondary_rd'],
+            'count': most_common_road_pair['count'],
+        } if most_common_road_pair else None,
+        'most_common_day': {
+            'day': most_common_day['day_of_week'],
+            'count': most_common_day['count'],
+        } if most_common_day else None,
+        'most_accidents_city': {
+            'city': most_accidents_city['location__city'],
+            'accident_count': most_accidents_city['accident_count']
+        } if most_accidents_city else None,
+    })
 
     # Return the statistics as a response
     return Response(statistics)
